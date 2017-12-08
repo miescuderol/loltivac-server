@@ -1,4 +1,5 @@
 const http = require('http');
+const https = require('https');
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -8,30 +9,50 @@ const server = http.createServer((req, res) => {
     let body = [];
     req.on('error', (err) => {
         console.error(err);
-    }).on('data', (chunk) => {
-        // add all the data we receive on the body to the body array
-        body.push(chunk);
-    }).on('end', () => {
-        // convert the array of buffers to a string
-        body = Buffer.concat(body).toString();
-        
-        // now that we have all the info about the request, we construct the response
-        res.on('error', (err) => {
-            console.error(err);
-        });
-
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        });
-
-        const responseBody = { headers, method, url, body };
-
-        res.write(JSON.stringify(responseBody));
+        res.statusCode = 400;
         res.end();
-        // other way to write the same thin: res.end(JSON.stringify(responseBody))
     });
-});
+    res.on('error', (err) => {
+        console.error(err);
+    });
 
+    getsummonerInfo('dooky18', (statusCode, data) => {
+        console.log("onResult: (" + statusCode + ")" + JSON.stringify(data));
+        res.statusCode = statusCode;
+        res.end(data);
+    });
+
+});
+// TODO: hacer algo
 server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+function getsummonerInfo(summonerName, callback) {
+    console.log('getsummonername')
+    const headers = {
+        "X-Riot-Token": "RGAPI-fcb90cbb-94da-425d-be0b-7cafb6a3ab53"}
+    const options = {
+        host: 'na1.api.riotgames.com',
+        path: '/lol/summoner/v3/summoners/by-name/dooky18',
+        method: 'GET',
+        headers: headers
+    }
+    let req = https.request(options, (response) => {
+        console.log('request');
+        console.log(response.statusCode);
+        let data = '';
+        response.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        response.on('end', () => {
+            data = JSON.stringify(data);
+            callback(response.statusCode, data);
+        })
+    });
+    req.on('error', (err) => {
+        console.log(err);
+    });
+    req.end();
+}

@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/loltivac-server/app"
+            "program": "/home/Dev/loltivac/loltivac-server/app"
         }
     ]
 }
