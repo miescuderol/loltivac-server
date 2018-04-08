@@ -1,13 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const http = require('http');
 const https = require('https');
-
-const hostname = '127.0.0.1';
-const port = 3000;
-const summonerEndpoint = '/lol/summoner/v3/summoners/by-name/';
-const matchesByAccountId = '/lol/match/v3/matchlists/by-account/';
-const matchById = '/lol/match/v3/matches/'
-
-const server = http.createServer((req, res) => {
+var endpoints;
+(function (endpoints) {
+    endpoints["summoner"] = "/lol/summoner/v3/summoners/by-name/";
+    endpoints["matchesByAccountId"] = "/lol/match/v3/matchlists/by-account/";
+    endpoints["matchById"] = "/lol/match/v3/matches/";
+})(endpoints = exports.endpoints || (exports.endpoints = {}));
+function getRankedGamesForSummonerName(req, res) {
     const { headers, method, url } = req;
     let body = [];
     let partialData;
@@ -19,31 +20,23 @@ const server = http.createServer((req, res) => {
     res.on('error', (err) => {
         console.error(err);
     });
-
-
-    callEndpoint(summonerEndpoint + 'dooky18', (statusCode, data) => {
+    callEndpoint(endpoints.summoner + req.params.summonerName, (statusCode, data) => {
         res.statusCode = statusCode;
         partialData = JSON.parse(data);
-        console.log(partialData.accountId);
-        callEndpoint(matchesByAccountId + partialData.accountId, (statusCode, data) => {
+        callEndpoint(endpoints.matchesByAccountId + partialData.accountId, (statusCode, data) => {
             res.statusCode = statusCode;
-            console.log(matchesByAccountId, 'response:', data);
+            console.log(endpoints.matchesByAccountId, 'response:', data);
             res.end(data);
         });
         res.end(data);
     });
-
-});
-
-// TODO: hacer algo
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
-
+}
+exports.getRankedGamesForSummonerName = getRankedGamesForSummonerName;
+;
 function callEndpoint(endpoint, callback) {
     console.log('getting:', endpoint);
     const headers = {
-        "X-Riot-Token": "RGAPI-be5d84d6-0b72-470d-902b-cc51f7197d37"
+        "X-Riot-Token": "RGAPI-ffd41b99-e152-4aca-bb9d-9ff60df79871"
     };
     const options = {
         host: 'na1.api.riotgames.com',
@@ -58,13 +51,13 @@ function callEndpoint(endpoint, callback) {
         response.on('data', (chunk) => {
             data += chunk;
         });
-
         response.on('end', () => {
             callback(response.statusCode, data);
-        })
+        });
     });
     req.on('error', (err) => {
         console.log(err);
     });
     req.end();
 }
+//# sourceMappingURL=riotAPI.js.map

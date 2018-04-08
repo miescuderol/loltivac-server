@@ -8,7 +8,10 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "/home/Dev/loltivac/loltivac-server/app"
+            "program": "${workspaceFolder}/app.ts",
+            "outFiles": [
+                "${workspaceFolder}/bin/**/*.js"
+            ]
         }
     ]
 }

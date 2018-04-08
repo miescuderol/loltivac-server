@@ -2,7 +2,7 @@
   "name": "loltivac-server",
   "version": "0.0.1",
   "description": "API to get meaningful info about your summoner",
-  "main": "app.js",
+  "main": "exApp.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/miescuderol/loltivac-server/issues"
   },
-  "homepage": "https://github.com/miescuderol/loltivac-server#readme"
+  "homepage": "https://github.com/miescuderol/loltivac-server#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^9.6.2",
+    "typescript": "^2.8.1"
+  }
 }
